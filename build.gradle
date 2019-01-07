@@ -1,16 +1,31 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     repositories {
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
         jcenter()
+        mavenCentral()
+        maven { url "http://repo1.maven.org/maven2"}
+        maven { url "https://jitpack.io" }
+        maven { url "http://oss.sonatype.org/content/repositories/snapshots" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
+        //classpath group:'com.sun.mail', name:'javax.mail', version:'1.6.2'
+
     }
 }
 
+
+//allprojects {
+//    repositories {
+//        jcenter()
+//    }
+//}
+
 allprojects {
     repositories {
-        jcenter()
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+        //jcenter()
     }
 }
 

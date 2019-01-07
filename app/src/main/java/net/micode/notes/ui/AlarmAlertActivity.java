@@ -30,6 +30,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -38,6 +39,19 @@ import net.micode.notes.data.Notes;
 import net.micode.notes.tool.DataUtils;
 
 import java.io.IOException;
+
+
+import java.util.Properties;
+
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMessage.RecipientType;
+
 
 
 public class AlarmAlertActivity extends Activity implements OnClickListener, OnDismissListener {
@@ -78,6 +92,15 @@ public class AlarmAlertActivity extends Activity implements OnClickListener, OnD
         if (DataUtils.visibleInNoteDatabase(getContentResolver(), mNoteId, Notes.TYPE_NOTE)) {
             showActionDialog();
             playAlarmSound();
+
+            SendEmailThread sendEmailThread = new SendEmailThread("601113103@qq.com", mSnippet);
+            sendEmailThread.start();
+//                    try {
+//                        sendEmail();
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+
         } else {
             finish();
         }
@@ -86,6 +109,48 @@ public class AlarmAlertActivity extends Activity implements OnClickListener, OnD
     private boolean isScreenOn() {
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         return pm.isScreenOn();
+    }
+
+    private void sendEmail(String whoToSend, String sendInfo) throws Exception{
+        // 属性对象
+        Properties properties = new Properties();
+        // 开启debug调试 ，打印信息
+        properties.setProperty("mail.debug", "true");
+        // 发送服务器需要身份验证
+        properties.setProperty("mail.smtp.auth", "true");
+        // 发送服务器端口，可以不设置，默认是25
+        properties.setProperty("mail.smtp.port", "25");
+        // 发送邮件协议名称
+        properties.setProperty("mail.transport.protocol", "smtp");
+        // 设置邮件服务器主机名
+        properties.setProperty("mail.host", "smtp.163.com");
+        // 环境信息
+        Session session = Session.getInstance(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                // 在session中设置账户信息，Transport发送邮件时会使用
+                return new PasswordAuthentication("15010735298@163.com", "minote12345678");
+            }
+        });
+
+        // 创建邮件对象
+        Message message = new MimeMessage(session);
+        // 设置主题
+        message.setSubject("小米便签条目到期提醒");
+        // 发件人
+        message.setFrom(new InternetAddress("15010735298@163.com"));
+        // 多个收件人
+        message.setRecipients(RecipientType.TO, InternetAddress.parse(whoToSend));
+        // 抄送人
+        //message.setRecipient(RecipientType.CC, new InternetAddress("reciveuser1@qq.com"));
+        // 暗送人
+        //message.setRecipient(RecipientType.BCC, new InternetAddress("reciveuser2@qq.com"));
+        // HTML内容
+        //message.setContent("<a href='http://blog.csdn.net/y534560449'>Hello Boy!!</a>", "text/html;charset=utf-8");
+        message.setContent(sendInfo, "text/html;charset=utf-8");
+
+        // 连接邮件服务器、发送邮件、关闭连接，全做了
+        Transport.send(message);
     }
 
     private void playAlarmSound() {
@@ -155,4 +220,22 @@ public class AlarmAlertActivity extends Activity implements OnClickListener, OnD
             mPlayer = null;
         }
     }
+
+
+    class SendEmailThread extends Thread{
+        String sendInfo;
+        String whoToSend;
+        public SendEmailThread(String whoToSend, String sendInfo){
+            this.sendInfo=sendInfo;
+            this.whoToSend=whoToSend;
+        }
+        public void run(){
+            try {
+                sendEmail(this.whoToSend, this.sendInfo);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
