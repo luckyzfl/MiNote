@@ -14,17 +14,33 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
+<!--android:title="@string/pre_sync_titile"-->
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:key="pref_sync_account_key">
+        android:key="pref_sync_account_key"
+        >
     </PreferenceCategory>
 
-    <PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/pre_bg_color_title"
+        >
         <CheckBoxPreference
             android:key="pref_key_bg_random_appear"
             android:title="@string/preferences_bg_random_appear_title"
             android:defaultValue="false" />
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/pre_email_titile"
+        >
+        <CheckBoxPreference
+            android:key="pref_key_notice_by_email"
+            android:title="@string/notice_by_email"
+            android:defaultValue="false" />
+        <EditTextPreference
+            android:key="notice_email_address"
+            android:title="@string/notice_email_address"
+            />
+    </PreferenceCategory>
+
 </PreferenceScreen>

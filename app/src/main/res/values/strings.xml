@@ -126,6 +126,11 @@
     <string name="search">Notes</string>
     <string name="datetime_dialog_ok">set</string>
     <string name="datetime_dialog_cancel">cancel</string>
+    <string name="notice_by_email">notice by email</string>
+    <string name="notice_email_address">input notice email</string>
+    <string name="pre_sync_titile">sync</string>
+    <string name="pre_bg_color_title">color</string>
+    <string name="pre_email_titile">notice email</string>
     <plurals name="search_results_title">
          <item quantity="one"><xliff:g id="number" example="1">%1$s</xliff:g> result for \"<xliff:g id="search" example="???">%2$s</xliff:g>\"</item>
         <!-- Case of 0 or 2 or more results. -->

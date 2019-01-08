@@ -119,6 +119,11 @@
     <string name="search">便签</string>
     <string name="datetime_dialog_ok">设置</string>
     <string name="datetime_dialog_cancel">取消</string>
+    <string name="notice_by_email">提醒时发送邮件</string>
+    <string name="notice_email_address">邮箱地址</string>
+    <string name="pre_sync_titile">同步</string>
+    <string name="pre_bg_color_title">背景颜色</string>
+    <string name="pre_email_titile">邮件通知</string>
     <plurals name="search_results_title">
         <item quantity="other"><xliff:g id="NUMBER">%1$s</xliff:g> 条符合“<xliff:g id="SEARCH">%2$s</xliff:g>”的搜索结果</item>
     </plurals>

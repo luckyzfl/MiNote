@@ -74,6 +74,16 @@ public class ResourceParser {
         }
     }
 
+    //author:zuofeilong add email notice function
+    public static String getNoticeEmail(Context context){
+        return PreferenceManager.getDefaultSharedPreferences(context).getString("notice_email_address","");
+    }
+
+    //author:zuofeilong add email notice function
+    public static Boolean getIsNoticeEmail(Context context){
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("pref_key_notice_by_email",false);
+    }
+
     public static class NoteItemBgResources {
         private final static int [] BG_FIRST_RESOURCES = new int [] {
             R.drawable.list_yellow_up,

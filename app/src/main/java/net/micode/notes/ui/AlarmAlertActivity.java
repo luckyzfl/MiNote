@@ -37,6 +37,7 @@ import android.view.WindowManager;
 import net.micode.notes.R;
 import net.micode.notes.data.Notes;
 import net.micode.notes.tool.DataUtils;
+import net.micode.notes.tool.ResourceParser;
 
 import java.io.IOException;
 
@@ -57,6 +58,7 @@ import javax.mail.internet.MimeMessage.RecipientType;
 public class AlarmAlertActivity extends Activity implements OnClickListener, OnDismissListener {
     private long mNoteId;
     private String mSnippet;
+    private String fullSnippet;
     private static final int SNIPPET_PREW_MAX_LEN = 60;
     MediaPlayer mPlayer;
 
@@ -79,7 +81,8 @@ public class AlarmAlertActivity extends Activity implements OnClickListener, OnD
 
         try {
             mNoteId = Long.valueOf(intent.getData().getPathSegments().get(1));
-            mSnippet = DataUtils.getSnippetById(this.getContentResolver(), mNoteId);
+            fullSnippet = DataUtils.getSnippetById(this.getContentResolver(), mNoteId);
+            mSnippet = new String(fullSnippet);
             mSnippet = mSnippet.length() > SNIPPET_PREW_MAX_LEN ? mSnippet.substring(0,
                     SNIPPET_PREW_MAX_LEN) + getResources().getString(R.string.notelist_string_info)
                     : mSnippet;
@@ -93,14 +96,18 @@ public class AlarmAlertActivity extends Activity implements OnClickListener, OnD
             showActionDialog();
             playAlarmSound();
 
-            SendEmailThread sendEmailThread = new SendEmailThread("601113103@qq.com", mSnippet);
-            sendEmailThread.start();
+            //author:zuofeilong add email notice function
+            if(true==ResourceParser.getIsNoticeEmail(this)){
+                SendEmailThread sendEmailThread = new SendEmailThread(ResourceParser.getNoticeEmail(this), fullSnippet);
+                sendEmailThread.start();
 //                    try {
 //                        sendEmail();
 //                    } catch (Exception e) {
 //                        e.printStackTrace();
 //                    }
+            }else{
 
+            }
         } else {
             finish();
         }
@@ -111,6 +118,8 @@ public class AlarmAlertActivity extends Activity implements OnClickListener, OnD
         return pm.isScreenOn();
     }
 
+
+    //author:zuofeilong add email notice function
     private void sendEmail(String whoToSend, String sendInfo) throws Exception{
         // 属性对象
         Properties properties = new Properties();
@@ -132,6 +141,7 @@ public class AlarmAlertActivity extends Activity implements OnClickListener, OnD
                 return new PasswordAuthentication("15010735298@163.com", "minote12345678");
             }
         });
+
 
         // 创建邮件对象
         Message message = new MimeMessage(session);
