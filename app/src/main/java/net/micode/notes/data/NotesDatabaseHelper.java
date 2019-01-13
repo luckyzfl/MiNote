@@ -42,6 +42,28 @@ public class NotesDatabaseHelper extends SQLiteOpenHelper {
 
     private static NotesDatabaseHelper mInstance;
 
+
+    /*
+        author:feilongzuo
+        便签基础数据表
+        1.ID
+        2.父ID(floder)
+        3.提醒日期
+        4.背景颜色id
+        5.创建时间
+        6.是否有附件
+        7.更改日期
+        8.(文件夹)所含note数量
+        9.文本内容
+        10.类型（文件夹还是note）
+        11.装饰id
+        12.装饰类型
+        13.同步id
+        14.
+        15.
+        16.
+        17.
+     */
     private static final String CREATE_NOTE_TABLE_SQL =
         "CREATE TABLE " + TABLE.NOTE + "(" +
             NoteColumns.ID + " INTEGER PRIMARY KEY," +
@@ -63,6 +85,19 @@ public class NotesDatabaseHelper extends SQLiteOpenHelper {
             NoteColumns.VERSION + " INTEGER NOT NULL DEFAULT 0" +
         ")";
 
+    /*
+        创建数据表SQL
+        1.id
+        2.
+        3.附属的note id
+        4.
+        5.
+        6.
+        7
+        8
+        9
+        10
+     */
     private static final String CREATE_DATA_TABLE_SQL =
         "CREATE TABLE " + TABLE.DATA + "(" +
             DataColumns.ID + " INTEGER PRIMARY KEY," +
@@ -78,6 +113,9 @@ public class NotesDatabaseHelper extends SQLiteOpenHelper {
             DataColumns.DATA5 + " TEXT NOT NULL DEFAULT ''" +
         ")";
 
+    /*
+        note id和data id映射
+     */
     private static final String CREATE_DATA_NOTE_ID_INDEX_SQL =
         "CREATE INDEX IF NOT EXISTS note_id_index ON " +
         TABLE.DATA + "(" + DataColumns.NOTE_ID + ");";

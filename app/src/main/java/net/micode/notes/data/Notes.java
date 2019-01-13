@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 package net.micode.notes.data;
 
 import android.net.Uri;
@@ -75,7 +76,7 @@ public class Notes {
         public static final String PARENT_ID = "parent_id";
 
         /**
-         * Created data for note or folder
+         * Created date for note or folder
          * <P> Type: INTEGER (long) </P>
          */
         public static final String CREATED_DATE = "created_date";
