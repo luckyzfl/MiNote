@@ -15,9 +15,9 @@
      limitations under the License.
 -->
 
-<FrameLayout
-    android:layout_width="fill_parent"
+<FrameLayout android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    xmlns:attachment_button="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/list_background"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -397,4 +397,18 @@
                 android:src="@drawable/selected" />
         </FrameLayout>
     </LinearLayout>
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/attachment_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/ic_star"
+        />
+        <!--attachment_button:fab_colorNormal="@color/app_primary"-->
+        <!--attachment_button:fab_colorPressed="@color/app_primary_pressed"-->
+        <!--attachment_button:fab_colorRipple="@color/app_ripple"-->
+        <!--/>-->
 </FrameLayout>

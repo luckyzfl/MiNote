@@ -43,6 +43,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -51,6 +52,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.clans.fab.FloatingActionButton;
 
 import net.micode.notes.R;
 import net.micode.notes.data.Notes;
@@ -159,6 +162,18 @@ public class NoteEditActivity extends Activity implements OnClickListener,
             return;
         }
         initResources();
+
+        final FloatingActionButton floatingActionButton = (FloatingActionButton)findViewById(R.id.attachment_button);
+        floatingActionButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(,"touch",Toast.LENGTH_SHORT);
+//                floatingActionButton.setLabelText("touch");
+                Log.d(TAG, "onClick: click");
+            }
+        });
+
+
     }
 
     /**
@@ -431,6 +446,9 @@ public class NoteEditActivity extends Activity implements OnClickListener,
             mNoteBgColorSelector.setVisibility(View.VISIBLE);
             findViewById(sBgSelectorSelectionMap.get(mWorkingNote.getBgColorId())).setVisibility(
                     -                    View.VISIBLE);
+        } else if (id == R.id.attachment_button) {
+
+            Toast.makeText(this,"touch attachment button",Toast.LENGTH_SHORT).show();
         } else if (sBgSelectorBtnsMap.containsKey(id)) {
             findViewById(sBgSelectorSelectionMap.get(mWorkingNote.getBgColorId())).setVisibility(
                     View.GONE);

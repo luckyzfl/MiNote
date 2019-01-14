@@ -277,4 +277,18 @@ public class Notes {
 
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/call_note");
     }
+
+
+    /**
+     * author: FeilongZuo
+     * AttachMent of Note
+
+     */
+    public static final class AttachMentNote implements DataColumns {
+
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/attachment_note";
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/attachment_note";
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/attachment_note");
+
+    }
 }
