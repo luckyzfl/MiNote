@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/attachment_add_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/ic_star"
+        />
+    <!--attachment_button:fab_colorNormal="@color/app_primary"-->
+    <!--attachment_button:fab_colorPressed="@color/app_primary_pressed"-->
+    <!--attachment_button:fab_colorRipple="@color/app_ripple"-->
+    <!--/>-->
+
+</LinearLayout>

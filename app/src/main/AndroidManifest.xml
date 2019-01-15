@@ -51,6 +51,11 @@
         </activity>
 
         <activity
+            android:name=".ui.AttachmentActivity"
+            android:theme="@style/NoteTheme"
+            />
+
+        <activity
             android:name=".ui.NoteEditActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTop"
