@@ -2,3 +2,4 @@ build/*
 app/build/*
 gradle/wrapper/gradle-4.1-all.zip
 .idea/*
+*.iml
