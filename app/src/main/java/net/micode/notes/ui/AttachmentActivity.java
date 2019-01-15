@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -73,7 +74,11 @@ public class AttachmentActivity extends Activity{
                  null );
 
 
-        ArrayList<String> arrayList = new ArrayList<String>();
+        ArrayList<Attachment> arrayList = new ArrayList<Attachment>();
+//        arrayList1.add(new Attachment(R.drawable.clock, "1111"));
+//        arrayList1.add(new Attachment(R.drawable.clock, "2222"));
+//        arrayList1.add(new Attachment(R.drawable.clock, "2222"));
+//        ArrayList<String> arrayList = new ArrayList<String>();
 
 
          //遍历select结果，塞进ListView
@@ -81,7 +86,7 @@ public class AttachmentActivity extends Activity{
              while(cursor.moveToNext()){
                  String content = cursor.getString(cursor.getColumnIndex("content"));
                  Log.d(TAG, "onCreate: "+ content);
-                 arrayList.add(content);
+                 arrayList.add(new Attachment(R.drawable.clock, content));
              }
          }
 
@@ -90,24 +95,37 @@ public class AttachmentActivity extends Activity{
         dynamicListView = (DynamicListView) findViewById(R.id.dynamiclistview);
         dynamicListView.enableDragAndDrop();
 
-        String [] ss = new String[]{"111","222","333"};
-        MyAdapter<String> myAdapter = new MyAdapter<String>(
-                AttachmentActivity.this,
-                android.R.layout.simple_list_item_1,
-                arrayList
-
-        );
+//        String [] ss = new String[]{"111","222","333"};
+//        MyAdapter<String> myAdapter = new MyAdapter<String>(
+//                AttachmentActivity.this,
+//                android.R.layout.simple_list_item_1,
+//                arrayList
+//
+//        );
 //        ArrayAdapter<String> arrayAdapter= new ArrayAdapter<String>(
 //                AttachmentActivity.this,
 //                android.R.layout.simple_list_item_1,
 //                ss
 //        );
 
-//
-//        AlphaInAnimationAdapter animationAdapter = new AlphaInAnimationAdapter(arrayAdapter);
-//        animationAdapter.setAbsListView(dynamicListView);
-        dynamicListView.setAdapter(arrayAdapter);
 
+
+
+
+        AttachmentAdapter attachmentAdapter = new AttachmentAdapter(
+                AttachmentActivity.this,
+                R.layout.attachment_item,
+                arrayList
+        );
+
+//        ListView listView = (ListView) findViewById(R.id.attachment_listView);
+//        listView.setAdapter(attachmentAdapter);
+//
+        AlphaInAnimationAdapter animationAdapter = new AlphaInAnimationAdapter(attachmentAdapter);
+        animationAdapter.setAbsListView(dynamicListView);
+        dynamicListView.setAdapter(animationAdapter);
+//        dynamicListView.setAdapter(myAdapter);
+//        dynamicListView.setAdapter(arrayAdapter);
 //        dynamicListView.insert(1,"1");
 
 
@@ -142,17 +160,4 @@ public class AttachmentActivity extends Activity{
     }
 
 
-}
-
-class MyAdapter<T> extends ArrayAdapter<T>{
-
-
-    public MyAdapter(Context context, int textViewResourceId, List<T> objects) {
-        super(context, textViewResourceId, objects);
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return true;
-    }
 }
