@@ -3,6 +3,7 @@ package net.micode.notes.ui;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,11 +11,17 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
+import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
 
 import net.micode.notes.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by feilong zuo on 19/1/15.
@@ -27,6 +34,8 @@ public class AttachmentActivity extends Activity{
     private ContentResolver contentResolver;
     private Uri URI_TABLE_DATA;
     private Long NOTE_ID;
+    private DynamicListView dynamicListView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +45,8 @@ public class AttachmentActivity extends Activity{
         Toast.makeText(this, NOTE_ID.toString() , Toast.LENGTH_LONG);
         contentResolver = getContentResolver();
         URI_TABLE_DATA = Uri.parse(URI_STRING_TABLE_DATA);
+
+
 
 //        ContentValues contentValues = new ContentValues();
 //        contentValues.put("mime_type",MIME_TYPE_ATTACHMENT);
@@ -61,16 +72,49 @@ public class AttachmentActivity extends Activity{
                  null,
                  null );
 
+
+        ArrayList<String> arrayList = new ArrayList<String>();
+
+
+         //遍历select结果，塞进ListView
          if(cursor!= null){
              while(cursor.moveToNext()){
                  String content = cursor.getString(cursor.getColumnIndex("content"));
                  Log.d(TAG, "onCreate: "+ content);
+                 arrayList.add(content);
              }
          }
 
 
 
+        dynamicListView = (DynamicListView) findViewById(R.id.dynamiclistview);
+        dynamicListView.enableDragAndDrop();
+
+        String [] ss = new String[]{"111","222","333"};
+        MyAdapter<String> myAdapter = new MyAdapter<String>(
+                AttachmentActivity.this,
+                android.R.layout.simple_list_item_1,
+                arrayList
+
+        );
+//        ArrayAdapter<String> arrayAdapter= new ArrayAdapter<String>(
+//                AttachmentActivity.this,
+//                android.R.layout.simple_list_item_1,
+//                ss
+//        );
+
+//
+//        AlphaInAnimationAdapter animationAdapter = new AlphaInAnimationAdapter(arrayAdapter);
+//        animationAdapter.setAbsListView(dynamicListView);
+        dynamicListView.setAdapter(arrayAdapter);
+
+//        dynamicListView.insert(1,"1");
+
+
+
+
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -87,6 +131,7 @@ public class AttachmentActivity extends Activity{
             String path = uri.getPath();
             Log.d(TAG, path);
 
+            //更新data数据库，把uri塞进去
             ContentValues contentValues = new ContentValues();
             contentValues.put("mime_type",MIME_TYPE_ATTACHMENT);
             contentValues.put("note_id",NOTE_ID);
@@ -97,4 +142,17 @@ public class AttachmentActivity extends Activity{
     }
 
 
+}
+
+class MyAdapter<T> extends ArrayAdapter<T>{
+
+
+    public MyAdapter(Context context, int textViewResourceId, List<T> objects) {
+        super(context, textViewResourceId, objects);
+    }
+
+    @Override
+    public boolean hasStableIds() {
+        return true;
+    }
 }

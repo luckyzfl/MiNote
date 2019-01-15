@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<FrameLayout android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:attachment_button="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/list_background"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <com.nhaarman.listviewanimations.itemmanipulation.DynamicListView
+            android:id="@+id/dynamiclistview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/attachment_add_button"
         android:layout_width="wrap_content"
@@ -16,5 +29,4 @@
     <!--attachment_button:fab_colorPressed="@color/app_primary_pressed"-->
     <!--attachment_button:fab_colorRipple="@color/app_ripple"-->
     <!--/>-->
-
-</LinearLayout>
+</FrameLayout>
