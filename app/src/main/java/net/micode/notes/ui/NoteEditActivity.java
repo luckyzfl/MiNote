@@ -135,6 +135,8 @@ public class NoteEditActivity extends Activity implements OnClickListener,
 
     private View mNoteEditorPanel;
 
+    private ImageView imageView1;
+
     private WorkingNote mWorkingNote;
 
     private SharedPreferences mSharedPrefs;
@@ -384,6 +386,7 @@ public class NoteEditActivity extends Activity implements OnClickListener,
 
     private void initResources() {
         mHeadViewPanel = findViewById(R.id.note_title);
+        imageView1=(ImageView)findViewById(R.id.menu_more);
         mNoteHeaderHolder = new HeadViewHolder();
         mNoteHeaderHolder.tvModified = (TextView) findViewById(R.id.tv_modified_date);
         mNoteHeaderHolder.ivAlertIcon = (ImageView) findViewById(R.id.iv_alert_icon);
@@ -449,7 +452,7 @@ public class NoteEditActivity extends Activity implements OnClickListener,
         if (id == R.id.btn_set_bg_color) {
             mNoteBgColorSelector.setVisibility(View.VISIBLE);
             findViewById(sBgSelectorSelectionMap.get(mWorkingNote.getBgColorId())).setVisibility(
-                    -                    View.VISIBLE);
+                   View.VISIBLE);
         } else if (id == R.id.attachment_button) {
 
             Toast.makeText(this,"touch attachment button",Toast.LENGTH_SHORT).show();
@@ -891,5 +894,9 @@ public class NoteEditActivity extends Activity implements OnClickListener,
 
     private void showToast(int resId, int duration) {
         Toast.makeText(this, resId, duration).show();
+    }
+
+    public void OnOpenMenu(View view) {
+        openOptionsMenu();
     }
 }

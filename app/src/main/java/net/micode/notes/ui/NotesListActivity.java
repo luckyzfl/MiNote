@@ -107,6 +107,8 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
 
     private boolean mDispatch;
 
+    private Button menu1;
+
     private int mOriginY;
 
     private int mDispatchY;
@@ -211,6 +213,7 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
 
     private void initResources() {
         mContentResolver = this.getContentResolver();
+        menu1=(Button)findViewById(R.id.menu);
         mBackgroundQueryHandler = new BackgroundQueryHandler(this.getContentResolver());
         mCurrentFolderId = Notes.ID_ROOT_FOLDER;
         mNotesListView = (ListView) findViewById(R.id.notes_list);
@@ -951,4 +954,6 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         }
         return false;
     }
+    public void OnOpenMenu(View view) {
+        openOptionsMenu();}
 }
