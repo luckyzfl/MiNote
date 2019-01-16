@@ -172,6 +172,12 @@ public class NoteEditActivity extends Activity implements OnClickListener,
                 //Toast.makeText(,"touch",Toast.LENGTH_SHORT);
 //                floatingActionButton.setLabelText("touch");
                 Log.d(TAG, "onClick: click");
+                Log.d(TAG, "onClick: note_id: " + mWorkingNote.getNoteId());
+                if(mWorkingNote.getNoteId() == 0){
+                    Toast.makeText(NoteEditActivity.this, "请保存便签后再添加附件",Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 Intent intent = new Intent(NoteEditActivity.this, AttachmentActivity.class);
                 intent.putExtra("note_id", mWorkingNote.getNoteId());
                 startActivity(intent);
