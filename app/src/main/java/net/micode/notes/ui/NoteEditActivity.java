@@ -22,19 +22,32 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.appwidget.AppWidgetManager;
+import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.style.BackgroundColorSpan;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -68,6 +81,7 @@ import net.micode.notes.ui.NoteEditText.OnTextViewChangeListener;
 import net.micode.notes.widget.NoteWidgetProvider_2x;
 import net.micode.notes.widget.NoteWidgetProvider_4x;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -154,6 +168,9 @@ public class NoteEditActivity extends Activity implements OnClickListener,
     private String mUserQuery;
     private Pattern mPattern;
 
+    private final int PHOTO_SUCCESS = 1;
+    private final int CAMERA_SUCCESS = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,6 +199,38 @@ public class NoteEditActivity extends Activity implements OnClickListener,
                 intent.putExtra("note_id", mWorkingNote.getNoteId());
                 startActivity(intent);
 
+            }
+        });
+        
+        final FloatingActionButton floatingActionButton1 = (FloatingActionButton)findViewById(R.id.add_img_button);
+        floatingActionButton1.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                NoteEditText e = (NoteEditText) findViewById(R.id.note_edit_view);
+                //e.insertDrawable(R.drawable.attachment_audio);
+
+
+
+                Log.d(TAG, "onClick: click add image button");
+                final CharSequence[] items = { "手机相册", "相机拍摄" };
+                AlertDialog dlg = new AlertDialog.Builder(NoteEditActivity.this).setTitle("选择图片").setItems(items,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int item) {
+                                //这里item是根据选择的方式,
+                                //在items数组里面定义了两种方式, 拍照的下标为1所以就调用拍照方法
+                                if(item==1){
+                                    Intent getImageByCamera= new Intent("android.media.action.IMAGE_CAPTURE");
+                                    startActivityForResult(getImageByCamera, CAMERA_SUCCESS);
+                                }else{
+                                    Intent getImage = new Intent(Intent.ACTION_GET_CONTENT);
+                                    getImage.addCategory(Intent.CATEGORY_OPENABLE);
+                                    getImage.setType("image/*");
+                                    startActivityForResult(getImage, PHOTO_SUCCESS);
+                                }
+                            }
+                        }).create();
+                dlg.show();
             }
         });
 
@@ -293,6 +342,7 @@ public class NoteEditActivity extends Activity implements OnClickListener,
     protected void onResume() {
         super.onResume();
         initNoteScreen();
+
     }
 
     private void initNoteScreen() {
@@ -320,6 +370,83 @@ public class NoteEditActivity extends Activity implements OnClickListener,
          * is not ready
          */
         showAlertHeader();
+
+        convertToImage();
+    }
+
+    private void convertToImage() {
+        //获取当前的edit
+        NoteEditText noteEditText = (NoteEditText)findViewById(R.id.note_edit_view);
+        //获取text
+        Editable editable = noteEditText.getText();
+        //截取img片段  [local]+uri+[local]
+
+        //提取uri
+        String sss=editable.toString();
+
+        int allLen=editable.length();
+        for(int i=0;i<allLen;i++)
+        {
+            for(int j=i;j<allLen;j++)
+            {
+                String newstring = sss.substring(i,j+1);
+                if(newstring.length()>15&&newstring.endsWith("[/local]")&&newstring.startsWith("[local]")){
+                    int s=7;
+                    int len = newstring.length()-15;
+                    String path = newstring.substring(s,s+len);
+//                    Uri originalUri = Uri.parse(uri);
+                    Bitmap bitmap = null;
+                    Log.d(TAG, "onActivityResult: uri"+path);
+//                    ContentResolver resolver = getContentResolver();
+                    try {
+                        Log.d(TAG, "onActivityResult:bitmap start resize ");
+//                        Bitmap originalBitmap = BitmapFactory.decodeStream(resolver.openInputStream(originalUri));
+//                        BitmapFactory.Options options=new BitmapFactory.Options();
+                        Bitmap originalBitmap = BitmapFactory.decodeFile(path);
+                        Log.d(TAG, "onActivityResult: bitmap"+originalBitmap.getByteCount());
+                        //bitmap = resizeImage(originalBitmap, 200, 200);
+                        bitmap = originalBitmap;
+                        Log.d(TAG, "onActivityResult: bitmap"+bitmap.getByteCount());
+                        Log.d(TAG, "onActivityResult: bitmap resize success");
+                    } catch (Exception e) {
+                        Log.d(TAG, "onActivityResult: get file_exception");
+                        e.printStackTrace();
+                    }
+
+                    if(bitmap!=null){
+                        Log.d(TAG, "onActivityResult: bitmap is not null");
+                        ImageSpan imageSpan = new ImageSpan(NoteEditActivity.this, bitmap);
+
+                        //创建一个SpannableString对象，以便插入用ImageSpan对象封装的图像
+//                        String ss= "[local]" + getPath(this,originalUri) + "[local]";
+                        String ss = "[local]" + path + "[/local]";
+                        SpannableString spannableString = new SpannableString(ss);
+                        //  用ImageSpan对象替换face
+                        spannableString.setSpan(imageSpan, 0, ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                        Log.d(TAG, "onActivityResult: create spannable string success");
+
+                        noteEditText.setIndex(i);
+                        int index = noteEditText.getSelectionStart(); //获取光标所在位置
+
+
+                        Log.d(TAG, "onActivityResult: get index success " + index);
+
+                        Log.d(TAG, "onActivityResult: " + spannableString);
+                        Editable edit_text = noteEditText.getEditableText();
+                        edit_text.delete(i,i+len+15);
+
+                        if (index < 0 || index >= edit_text.length()) {
+                            edit_text.append(spannableString);
+                        } else {
+                            edit_text.insert(index, spannableString);
+                        }
+                    }
+                }
+            }
+        }
+//        mWorkingNote.mNote.syncNote(mWorkingNote.mContext,mWorkingNote.mNoteId);
+        //图文混排
     }
 
     private void showAlertHeader() {
@@ -905,4 +1032,249 @@ public class NoteEditActivity extends Activity implements OnClickListener,
     public void OnOpenMenu(View view) {
         openOptionsMenu();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        ContentResolver resolver = getContentResolver();
+        Log.d(TAG, "onActivityResult: resultcode"+resultCode);
+
+        if (resultCode == -1) {
+            Log.d(TAG, "onActivityResult: request code"+requestCode);
+            switch (requestCode) {
+                case PHOTO_SUCCESS:
+                    //获得图片的uri
+                    Uri originalUri = intent.getData();
+//                    AttachmentActivity.getPath();
+                    Bitmap bitmap = null;
+                    Log.d(TAG, "onActivityResult: uri"+originalUri);
+                    try {
+                        Log.d(TAG, "onActivityResult:bitmap start resize ");
+                        Bitmap originalBitmap = BitmapFactory.decodeStream(resolver.openInputStream(originalUri));
+                        Log.d(TAG, "onActivityResult: bitmap"+originalBitmap.getByteCount());
+                        bitmap = resizeImage(originalBitmap, 200, 200);
+                        Log.d(TAG, "onActivityResult: bitmap"+bitmap.getByteCount());
+                        Log.d(TAG, "onActivityResult: bitmap resize success");
+                    } catch (FileNotFoundException e) {
+                        Log.d(TAG, "onActivityResult: get file_exception");
+                        e.printStackTrace();
+                    }
+                    if(bitmap != null){
+                        //根据Bitmap对象创建ImageSpan对象
+                        Log.d(TAG, "onActivityResult: bitmap is not null");
+                        ImageSpan imageSpan = new ImageSpan(NoteEditActivity.this, bitmap);
+
+
+                        //创建一个SpannableString对象，以便插入用ImageSpan对象封装的图像
+//                        String ss= "[local]" + getPath(this,originalUri) + "[local]";
+                        String path = getPath(this,originalUri);
+                        String ss= "[local]" + path + "[/local]";
+                        SpannableString spannableString = new SpannableString(ss);
+                        //  用ImageSpan对象替换face
+                        spannableString.setSpan(imageSpan, 0, ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                        Log.d(TAG, "onActivityResult: create spannable string success");
+                        
+                        //将选择的图片追加到EditText中光标所在位置
+                        NoteEditText e = (NoteEditText) findViewById(R.id.note_edit_view);
+
+                        Log.d(TAG, "onActivityResult: origin"+e.getText());
+                        int index = e.getSelectionStart(); //获取光标所在位置
+
+                        Log.d(TAG, "onActivityResult: get index success " + index);
+
+                        Log.d(TAG, "onActivityResult: " + spannableString);
+                        Editable edit_text = e.getEditableText();
+                        
+                        if(index <0 || index >= edit_text.length()){
+                            edit_text.append(spannableString);
+                        }else{
+                            edit_text.insert(index, spannableString);
+                        }
+                        Log.d(TAG, "onActivityResult: insert/append success");
+                        Log.d(TAG, "onActivityResult: new"+e.getText());
+
+                        mWorkingNote.mContent = e.getText().toString();
+//                        mWorkingNote.mNote.syncNote(mWorkingNote.mContext,mWorkingNote.mNoteId);
+
+                        //吧改动提交到数据库中,两个数据库表都要改的
+                        ContentResolver contentResolver = getContentResolver();
+                        ContentValues contentValues = new ContentValues();
+                        final long id = mWorkingNote.getNoteId();
+                        contentValues.put("snippet",mWorkingNote.mContent);
+                        contentResolver.update(Uri.parse("content://micode_notes/note"),contentValues,"_id=?",new String[]{""+id});
+
+                        ContentValues contentValues1 = new ContentValues();
+                        contentValues1.put("content",mWorkingNote.mContent);
+                        contentResolver.update(Uri.parse("content://micode_notes/data"),contentValues1,"mime_type=? and note_id=?",new String[]{"vnd.android.cursor.item/text_note",""+id});
+
+                    }else{
+                        Toast.makeText(NoteEditActivity.this, "获取图片失败", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case CAMERA_SUCCESS:
+                    Bundle extras = intent.getExtras();
+                    Bitmap originalBitmap1 = (Bitmap) extras.get("data");
+                    if(originalBitmap1 != null){
+                        bitmap = resizeImage(originalBitmap1, 200, 200);
+                        //根据Bitmap对象创建ImageSpan对象
+                        ImageSpan imageSpan = new ImageSpan(NoteEditActivity.this, bitmap);
+                        //创建一个SpannableString对象，以便插入用ImageSpan对象封装的图像
+                        SpannableString spannableString = new SpannableString("[local]"+1+"[/local]");
+                        //  用ImageSpan对象替换face
+                        spannableString.setSpan(imageSpan, 0, "[local]1[local]".length()+1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        //将选择的图片追加到EditText中光标所在位置
+                        NoteEditText e = (NoteEditText) findViewById(R.id.note_edit_view);
+                        int index = e.getSelectionStart(); //获取光标所在位置
+                        Editable edit_text = e.getEditableText();
+                        if(index <0 || index >= edit_text.length()){
+                            edit_text.append(spannableString);
+                        }else{
+                            edit_text.insert(index, spannableString);
+                        }
+                    }else{
+                        Toast.makeText(NoteEditActivity.this, "获取图片失败", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /**
+     * 图片缩放
+     * @param originalBitmap 原始的Bitmap
+     * @param newWidth 自定义宽度
+     * @return 缩放后的Bitmap
+     */
+    private Bitmap resizeImage(Bitmap originalBitmap, int newWidth, int newHeight){
+        int width = originalBitmap.getWidth();
+        int height = originalBitmap.getHeight();
+        //定义欲转换成的宽、高
+//            int newWidth = 200;
+//            int newHeight = 200;
+        //计算宽、高缩放率
+        float scanleWidth = (float)newWidth/width;
+        float scanleHeight = (float)newHeight/height;
+        //创建操作图片用的matrix对象 Matrix
+        Matrix matrix = new Matrix();
+        // 缩放图片动作
+        matrix.postScale(scanleWidth,scanleHeight);
+        //旋转图片 动作
+        //matrix.postRotate(45);
+        // 创建新的图片Bitmap
+        Bitmap resizedBitmap = Bitmap.createBitmap(originalBitmap,0,0,width,height,matrix,true);
+        return resizedBitmap;
+    }    //获取所得文件的绝对路径
+    public String getPath(final Context context, final Uri uri) {
+
+        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+
+        // DocumentProvider
+        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+            // ExternalStorageProvider
+            if (isExternalStorageDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+//                Log.i(TAG,"isExternalStorageDocument***"+uri.toString());
+//                Log.i(TAG,"docId***"+docId);
+//                以下是打印示例：
+//                isExternalStorageDocument***content://com.android.externalstorage.documents/document/primary%3ATset%2FROC2018421103253.wav
+//                docId***primary:Test/ROC2018421103253.wav
+                final String[] split = docId.split(":");
+                final String type = split[0];
+
+                if ("primary".equalsIgnoreCase(type)) {
+                    return Environment.getExternalStorageDirectory() + "/" + split[1];
+                }
+            }
+            // DownloadsProvider
+            else if (isDownloadsDocument(uri)) {
+//                Log.i(TAG,"isDownloadsDocument***"+uri.toString());
+                final String id = DocumentsContract.getDocumentId(uri);
+                final Uri contentUri = ContentUris.withAppendedId(
+                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+
+                return getDataColumn(context, contentUri, null, null);
+            }
+            // MediaProvider
+            else if (isMediaDocument(uri)) {
+//                Log.i(TAG,"isMediaDocument***"+uri.toString());
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+
+                Uri contentUri = null;
+                if ("image".equals(type)) {
+                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                } else if ("video".equals(type)) {
+                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                } else if ("audio".equals(type)) {
+                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                }
+
+                final String selection = "_id=?";
+                final String[] selectionArgs = new String[]{split[1]};
+
+                return getDataColumn(context, contentUri, selection, selectionArgs);
+            }
+        }
+        // MediaStore (and general)
+        else if ("content".equalsIgnoreCase(uri.getScheme())) {
+//            Log.i(TAG,"content***"+uri.toString());
+            return getDataColumn(context, uri, null, null);
+        }
+        // File
+        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+//            Log.i(TAG,"file***"+uri.toString());
+            return uri.getPath();
+        }
+        return null;
+    }
+
+    /**
+     * Get the value of the data column for this Uri. This is useful for
+     * MediaStore Uris, and other file-based ContentProviders.
+     *
+     * @param context       The context.
+     * @param uri           The Uri to query.
+     * @param selection     (Optional) Filter used in the query.
+     * @param selectionArgs (Optional) Selection arguments used in the query.
+     * @return The value of the _data column, which is typically a file path.
+     */
+    public String getDataColumn(Context context, Uri uri, String selection,
+                                String[] selectionArgs) {
+
+        Cursor cursor = null;
+        final String column = "_data";
+        final String[] projection = {column};
+
+        try {
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
+                    null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final int column_index = cursor.getColumnIndexOrThrow(column);
+                return cursor.getString(column_index);
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return null;
+    }
+
+
+    public boolean isExternalStorageDocument(Uri uri) {
+        return "com.android.externalstorage.documents".equals(uri.getAuthority());
+    }
+
+    public boolean isDownloadsDocument(Uri uri) {
+        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+    }
+
+    public boolean isMediaDocument(Uri uri) {
+        return "com.android.providers.media.documents".equals(uri.getAuthority());
+    }
+
+
 }

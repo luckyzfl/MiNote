@@ -34,11 +34,11 @@ import net.micode.notes.tool.ResourceParser.NoteBgResources;
 
 public class WorkingNote {
     // Note for the working note
-    private Note mNote;
+    public Note mNote;
     // Note Id
-    private long mNoteId;
+    public long mNoteId;
     // Note content
-    private String mContent;
+    public String mContent;
     // Note mode
     private int mMode;
 
@@ -54,7 +54,7 @@ public class WorkingNote {
 
     private long mFolderId;
 
-    private Context mContext;
+    public Context mContext;
 
     private static final String TAG = "WorkingNote";
 

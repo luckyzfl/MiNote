@@ -413,8 +413,21 @@
         android:layout_marginRight="8dp"
         android:src="@drawable/attachment"
         />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/add_img_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/attachment_add"
+        />
+
         <!--attachment_button:fab_colorNormal="@color/app_primary"-->
         <!--attachment_button:fab_colorPressed="@color/app_primary_pressed"-->
         <!--attachment_button:fab_colorRipple="@color/app_ripple"-->
         <!--/>-->
+
+
 </FrameLayout>
