@@ -18,7 +18,6 @@
 <FrameLayout android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:attachment_button="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/list_background"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
@@ -55,10 +54,17 @@
                 android:layout_marginLeft="2dip"
                 android:layout_marginRight="8dip"
                 android:textAppearance="@style/TextAppearanceSecondaryItem" />
+            <Button
+                android:id="@+id/background"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="背景设置"/>
+
             <ImageView
                 android:id="@+id/btn_set_bg_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:padding="10dp"
                 android:background="@drawable/bg_btn_set_color"/>
             <ImageButton
@@ -67,6 +73,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="OnOpenMenu"
                 android:layout_gravity="center"
+
                 android:background="@drawable/ic_menu_more" />
         </LinearLayout>
 
@@ -84,11 +91,11 @@
             <ScrollView
                 android:layout_width="fill_parent"
                 android:layout_height="0dip"
-                android:layout_weight="1"
-                android:scrollbars="none"
-                android:overScrollMode="never"
                 android:layout_gravity="left|top"
-                android:fadingEdgeLength="0dip">
+                android:layout_weight="1"
+                android:fadingEdgeLength="0dip"
+                android:overScrollMode="never"
+                android:scrollbars="none">
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -97,21 +104,22 @@
                     <net.micode.notes.ui.NoteEditText
                         android:id="@+id/note_edit_view"
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left|top"
-                        android:background="@null"
+                        android:layout_height="fill_parent"
                         android:autoLink="all"
+                        android:background="@null"
+                        android:gravity="left|top"
+                        android:lineSpacingMultiplier="1.2"
                         android:linksClickable="false"
                         android:minLines="12"
                         android:textAppearance="@style/TextAppearancePrimaryItem"
-                        android:lineSpacingMultiplier="1.2" />
+                        />
 
                     <LinearLayout
                         android:id="@+id/note_edit_list"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
                         android:layout_marginLeft="-10dip"
+                        android:orientation="vertical"
                         android:visibility="gone" />
                 </LinearLayout>
             </ScrollView>
@@ -411,7 +419,7 @@
         android:layout_gravity="bottom|right"
         android:layout_marginBottom="8dp"
         android:layout_marginRight="8dp"
-        android:src="@drawable/attachment"
+        android:src="@drawable/ic_star"
         />
 
     <com.github.clans.fab.FloatingActionButton
