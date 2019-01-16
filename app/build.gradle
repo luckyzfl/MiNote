@@ -8,13 +8,13 @@ android {
 //            storePassword 'Nanbao520'
 //        }
     }
-    compileSdkVersion 14
+    compileSdkVersion 19
     buildToolsVersion "28.0.3"
     //useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "net.micode.notes"
         minSdkVersion 14
-        targetSdkVersion 23
+        targetSdkVersion 19
     }
     buildTypes {
 //        release {

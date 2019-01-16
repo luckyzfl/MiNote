@@ -1,6 +1,7 @@
 package net.micode.notes.ui;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,13 +32,21 @@ public class AttachmentAdapter extends ArrayAdapter<Attachment>{
         ImageView attachmentImage = (ImageView) view.findViewById(R.id.attachment_image);
         TextView textView = (TextView) view.findViewById(R.id.attachment_content);
         attachmentImage.setImageResource(attachment.getImageID());
-        textView.setText(attachment.getContent());
+        String path = attachment.getContent();
+        String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
+        //Log.d(TAG, fileName);
+        textView.setText(fileName);
         return view;
     }
 
     @Override
     public boolean hasStableIds() {
         return true;
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
     }
 }
 
