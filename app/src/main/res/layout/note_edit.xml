@@ -419,7 +419,7 @@
         android:layout_gravity="bottom|right"
         android:layout_marginBottom="8dp"
         android:layout_marginRight="8dp"
-        android:src="@drawable/attachment"
+        android:src="@drawable/ic_star"
         />
         <!--attachment_button:fab_colorNormal="@color/app_primary"-->
         <!--attachment_button:fab_colorPressed="@color/app_primary_pressed"-->

@@ -321,33 +321,6 @@ public class NoteEditActivity extends Activity implements View.OnClickListener, 
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
                     try {
-                        ContentResolver resolver = getContentResolver();
-                        if (requestCode == 1) {
-                            try {
-                                Uri originalUri = data.getData(); // 获得图片的uri
-                                MediaStore.Images.Media.getBitmap(resolver, originalUri);
-                                String[] proj = {MediaStore.Images.Media.DATA};
-                                @SuppressWarnings("deprecation")
-                                Cursor cursor = managedQuery(originalUri, proj, null, null,
-                                        null);
-                                int column_index = cursor
-                                        .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                                cursor.moveToFirst();
-                                String path = cursor.getString(column_index);
-                                SharedPreferences preferences = getSharedPreferences("PATH",
-                                        Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = preferences.edit();
-                                editor.putString("path", path.trim());
-                                editor.commit();
-                                Toast.makeText(getApplicationContext(), "修改成功，重启应用方可生效！",
-                                        Toast.LENGTH_SHORT).show();
-
-                            } catch (IOException e) {
-                                Log.e("TAG-->Error", e.toString());
-                            }
-                        }
-                        super.onActivityResult(requestCode, resultCode, data);
-
                         // 将拍摄的照片显示出来
                         Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
                         Drawable tupian = new BitmapDrawable(bitmap);
