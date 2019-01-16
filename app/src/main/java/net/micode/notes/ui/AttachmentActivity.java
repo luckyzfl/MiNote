@@ -18,8 +18,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -30,7 +28,6 @@ import net.micode.notes.R;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -100,7 +97,37 @@ public class AttachmentActivity extends Activity{
                  String content = cursor.getString(cursor.getColumnIndex("content"));
                  Log.d(TAG, "onCreate: "+ content);
                  String name = content.substring(content.lastIndexOf("/") + 1, content.length());
-                 arrayList.add(new Attachment(R.drawable.clock, content));
+
+
+                 int pic_id;
+                 /* 取得扩展名 */
+                 String end = content.substring(content.lastIndexOf(".") + 1, content.length()).toLowerCase(Locale.getDefault());
+                /* 依扩展名的类型决定MimeType */
+                 if (end.equals("m4a") || end.equals("mp3") || end.equals("mid") || end.equals("xmf") || end.equals("ogg") || end.equals("wav")) {
+                     pic_id = R.drawable.attachment_audio;
+                 } else if (end.equals("3gp") || end.equals("mp4")) {
+                     pic_id = R.drawable.attachment_video;
+                 } else if (end.equals("jpg") || end.equals("gif") || end.equals("png") || end.equals("jpeg") || end.equals("bmp")) {
+                     pic_id = R.drawable.attachment_photo;
+//                 } else if (end.equals("apk")) {
+//                     return getApkFileIntent(filePath);
+//                 } else if (end.equals("ppt")) {
+//                     return getPptFileIntent(filePath);
+//                 } else if (end.equals("xls")) {
+//                     return getExcelFileIntent(filePath);
+//                 } else if (end.equals("doc")) {
+//                     return getWordFileIntent(filePath);
+//                 } else if (end.equals("pdf")) {
+//                     return getPdfFileIntent(filePath);
+//                 } else if (end.equals("chm")) {
+//                     return getChmFileIntent(filePath);
+//                 } else if (end.equals("txt")) {
+//                     return getTextFileIntent(filePath, false);
+                 } else {
+                     pic_id = R.drawable.attachment_file;
+                 }
+
+                 arrayList.add(new Attachment(pic_id, content));
              }
          }
 
@@ -246,7 +273,36 @@ public class AttachmentActivity extends Activity{
 
             //更新ui,如果附件是新添加的
 //            onCreate();
-            arrayList.add(new Attachment(R.drawable.clock, path));
+//          构造新的Attachment结构体
+            /* 取得扩展名 */
+            int pic_id;
+            String end = path.substring(path.lastIndexOf(".") + 1, path.length()).toLowerCase(Locale.getDefault());
+                /* 依扩展名的类型决定MimeType */
+            if (end.equals("m4a") || end.equals("mp3") || end.equals("mid") || end.equals("xmf") || end.equals("ogg") || end.equals("wav")) {
+                pic_id = R.drawable.attachment_audio;
+            } else if (end.equals("3gp") || end.equals("mp4")) {
+                pic_id = R.drawable.attachment_video;
+            } else if (end.equals("jpg") || end.equals("gif") || end.equals("png") || end.equals("jpeg") || end.equals("bmp")) {
+                pic_id = R.drawable.attachment_photo;
+//                 } else if (end.equals("apk")) {
+//                     return getApkFileIntent(filePath);
+//                 } else if (end.equals("ppt")) {
+//                     return getPptFileIntent(filePath);
+//                 } else if (end.equals("xls")) {
+//                     return getExcelFileIntent(filePath);
+//                 } else if (end.equals("doc")) {
+//                     return getWordFileIntent(filePath);
+//                 } else if (end.equals("pdf")) {
+//                     return getPdfFileIntent(filePath);
+//                 } else if (end.equals("chm")) {
+//                     return getChmFileIntent(filePath);
+//                 } else if (end.equals("txt")) {
+//                     return getTextFileIntent(filePath, false);
+            } else {
+                pic_id = R.drawable.attachment_file;
+            }
+
+            arrayList.add(new Attachment(pic_id, path));
             attachmentAdapter.notifyDataSetChanged();
 //            animationAdapter.notifyDataSetChanged();
 //            Intent intent = new Intent(AttachmentActivity.this,AttachmentActivity.class);
